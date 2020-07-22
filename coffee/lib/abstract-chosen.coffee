@@ -26,6 +26,7 @@ class AbstractChosen
     @disable_search = @options.disable_search || false
     @enable_split_word_search = if @options.enable_split_word_search? then @options.enable_split_word_search else true
     @group_search = if @options.group_search? then @options.group_search else true
+    @search_in_values = @options.search_in_values || false
     @search_contains = @options.search_contains || false
     @single_backstroke_delete = if @options.single_backstroke_delete? then @options.single_backstroke_delete else true
     @max_selected_options = @options.max_selected_options || Infinity
@@ -168,9 +169,11 @@ class AbstractChosen
 
     results = 0
 
+    searchMatchFromValue = false
     query = this.get_search_text()
     escapedQuery = query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
     regex = this.get_search_regex(escapedQuery)
+    highlightRegex = this.get_highlight_regex(escapedQuery)
 
     for option in @results_data
 
@@ -196,11 +199,15 @@ class AbstractChosen
           search_match = this.search_string_match(text, regex)
           option.search_match = search_match?
 
+          if not option.search_match and @search_in_values
+            option.search_match = this.search_string_match(option.value, regex)
+            searchMatchFromValue = true
+
           results += 1 if option.search_match and not option.group
 
           if option.search_match
-            if query.length
-              startpos = search_match.index
+            if query.length and not searchMatchFromValue
+              startpos = search_match.index highlightRegex
               prefix = text.slice(0, startpos)
               fix    = text.slice(startpos, startpos + query.length)
               suffix = text.slice(startpos + query.length)
@@ -227,6 +234,11 @@ class AbstractChosen
     regex_string = "^#{regex_string}" unless @enable_split_word_search or @search_contains
     regex_flag = if @case_sensitive_search then "" else "i"
     new RegExp(regex_string, regex_flag)
+
+  get_highlight_regex: (escaped_search_string) ->
+     regex_anchor = if @search_contains then "" else "\\b"
+     regex_flag = if @case_sensitive_search then "" else "i"
+     new RegExp(regex_anchor + escaped_search_string, regex_flag)
 
   search_string_match: (search_string, regex) ->
     match = regex.exec(search_string)
