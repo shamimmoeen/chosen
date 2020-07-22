@@ -169,11 +169,11 @@ class AbstractChosen
 
     results = 0
 
-    searchText = this.get_search_text()
     searchMatchFromValue = false
-    escapedSearchText = searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
-    regex = this.get_search_regex(escapedSearchText)
-    highlightRegex = this.get_highlight_regex(escapedSearchText)
+    query = this.get_search_text()
+    escapedQuery = query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
+    regex = this.get_search_regex(escapedQuery)
+    highlightRegex = this.get_highlight_regex(escapedQuery)
 
     for option in @results_data
 
@@ -196,26 +196,17 @@ class AbstractChosen
         text = if option.group then option.label else option.text
 
         unless option.group and not @group_search
-          option.search_match = this.search_string_match(option.search_text, regex)
-          
-          if not option.search_match and @search_in_values
-            option.search_match = this.search_string_match(option.value, regex)
-            searchMatchFromValue = true
-          
-          results += 1 if option.search_match and not option.group
-
-          if option.search_match
-            if searchText.length and not searchMatchFromValue
-              startpos = option.search_text.search highlightRegex
-              text = option.search_text.substr(0, startpos + searchText.length) + '</em>' + option.search_text.substr(startpos + searchText.length)
-              option.search_text = text.substr(0, startpos) + '<em>' + text.substr(startpos)
           search_match = this.search_string_match(text, regex)
           option.search_match = search_match?
 
+          if not option.search_match and @search_in_values
+            option.search_match = this.search_string_match(option.value, regex)
+            searchMatchFromValue = true
+
           results += 1 if option.search_match and not option.group
 
           if option.search_match
-            if query.length
+            if query.length and not searchMatchFromValue
               startpos = search_match.index
               prefix = text.slice(0, startpos)
               fix    = text.slice(startpos, startpos + query.length)
@@ -243,6 +234,11 @@ class AbstractChosen
     regex_string = "^#{regex_string}" unless @enable_split_word_search or @search_contains
     regex_flag = if @case_sensitive_search then "" else "i"
     new RegExp(regex_string, regex_flag)
+
+  get_highlight_regex: (escaped_search_string) ->
+     regex_anchor = if @search_contains then "" else "\\b"
+     regex_flag = if @case_sensitive_search then "" else "i"
+     new RegExp(regex_anchor + escaped_search_string, regex_flag)
 
   search_string_match: (search_string, regex) ->
     match = regex.exec(search_string)
