@@ -35,6 +35,7 @@ class AbstractChosen
     @inherit_option_classes = @options.inherit_option_classes || false
     @display_selected_options = if @options.display_selected_options? then @options.display_selected_options else true
     @display_disabled_options = if @options.display_disabled_options? then @options.display_disabled_options else true
+    @parser_config = @options.parser_config || {}
     @include_group_label_in_selected = @options.include_group_label_in_selected || false
     @max_shown_results = @options.max_shown_results || Number.POSITIVE_INFINITY
     @case_sensitive_search = @options.case_sensitive_search || false
@@ -118,12 +119,15 @@ class AbstractChosen
     option_el = document.createElement("li")
     option_el.className = classes.join(" ")
     option_el.style.cssText = option.style if option.style
+    for attrName of option.data
+      if option.data.hasOwnProperty(attrName)
+        option_el.setAttribute(attrName, option.data[attrName])
     option_el.setAttribute("data-option-array-index", option.array_index)
-    option_el.innerHTML = option.highlighted_html or option.html
+    option_el.setAttribute("data-value", option.value);
     option_el.setAttribute("role", "option")
+    option_el.innerHTML = option.highlighted_html or option.html
     option_el.id = "#{@form_field.id}-chosen-search-result-#{option.array_index}"
     option_el.title = option.title if option.title
-    option_el.setAttribute("data-value", option.value);
 
     this.outerHTML(option_el)
 
