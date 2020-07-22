@@ -314,12 +314,18 @@ class @Chosen extends AbstractChosen
     if @form_field_label?
       @form_field_label.observe "click", this.label_click_handler
 
+  set_search_field_placeholder: ->
+    if @is_multiple and this.choices_count() < 1
+      @search_field.placeholder = @default_text
+    else
+      @search_field.placeholder = ''
+
   show_search_field_default: ->
+    @search_field.value = ""
+    do @set_search_field_placeholder
     if @is_multiple and this.choices_count() < 1 and not @active_field
-      @search_field.value = @default_text
       @search_field.addClassName "default"
     else
-      @search_field.value = ""
       @search_field.removeClassName "default"
 
   search_results_mouseup: (evt) ->
@@ -366,6 +372,7 @@ class @Chosen extends AbstractChosen
 
       link.up('li').remove()
 
+      do @set_search_field_placeholder
       this.search_field_scale()
 
   results_reset: ->
@@ -539,7 +546,7 @@ class @Chosen extends AbstractChosen
     for style in styles
       style_block[style] = @search_field.getStyle(style)
 
-    div = new Element('div').update(this.escape_html(this.get_search_field_value()))
+    div = new Element('div').update(this.escape_html(this.get_search_field_value() || @search_field.placeholder))
     # CSP without 'unsafe-inline' doesn't allow setting the style attribute directly
     div.setStyle(style_block)
     document.body.appendChild(div)
