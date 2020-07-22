@@ -51,7 +51,7 @@ class AbstractChosen
 
   choice_label: (item) ->
     if @include_group_label_in_selected and item.group_label?
-      "<b class='group-name'>#{item.group_label}</b>#{item.html}"
+      "<b class='group-name'>#{this.escape_html(item.group_label)}</b>#{item.html}"
     else
       item.html
 
@@ -117,6 +117,8 @@ class AbstractChosen
     option_el.style.cssText = option.style if option.style
     option_el.setAttribute("data-option-array-index", option.array_index)
     option_el.innerHTML = option.highlighted_html or option.html
+    option_el.setAttribute("role", "option")
+    option_el.id = "#{@form_field.id}-chosen-search-result-#{option.array_index}"
     option_el.title = option.title if option.title
     option_el.setAttribute("data-value", option.value);
 
@@ -212,9 +214,11 @@ class AbstractChosen
 
     if results < 1 and query.length
       this.update_results_content ""
+      this.fire_search_updated query
       this.no_results query
     else
       this.update_results_content this.results_option_build()
+      this.fire_search_updated query
       this.winnow_results_set_highlight() unless options?.skip_highlight
 
   get_search_regex: (escaped_search_string) ->
@@ -333,13 +337,12 @@ class AbstractChosen
   get_single_html: ->
     """
       <a class="chosen-single chosen-default">
-        <input class="chosen-focus-input" type="text" autocomplete="off" />
         <span>#{@default_text}</span>
         <div><b></b></div>
       </a>
       <div class="chosen-drop">
         <div class="chosen-search">
-          <input class="chosen-search-input" type="text" autocomplete="off" />
+          <input class="chosen-search-input" type="text" autocomplete="off" aria-expanded="false" aria-haspopup="true" role="combobox" aria-autocomplete="list" autocomplete="off" role="listbox" />
         </div>
         <ul class="chosen-results"></ul>
       </div>
@@ -349,11 +352,11 @@ class AbstractChosen
     """
       <ul class="chosen-choices">
         <li class="search-field">
-          <input class="chosen-search-input" type="text" autocomplete="off" value="#{@default_text}" />
+          <input class="chosen-search-input" type="text" autocomplete="off" value="#{@default_text}" aria-expanded="false" aria-haspopup="true" role="combobox" aria-autocomplete="list" />
         </li>
       </ul>
       <div class="chosen-drop">
-        <ul class="chosen-results"></ul>
+        <ul class="chosen-results" role="listbox"></ul>
       </div>
     """
 

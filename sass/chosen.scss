@@ -20,10 +20,12 @@ $chosen-sprite-retina: url('chosen-sprite@2x.png') !default;
     border-top: 0;
     background: #fff;
     box-shadow: 0 4px 5px rgba(#000,.15);
-    display: none;
+    clip: rect(0,0,0,0);
+    clip-path: inset(100% 100%);
   }
   &.chosen-with-drop .chosen-drop {
-    display: block;
+    clip: auto;
+    clip-path: none;
   }
   a{
     cursor: pointer;
@@ -65,13 +67,6 @@ $chosen-sprite-retina: url('chosen-sprite@2x.png') !default;
     text-decoration: none;
     white-space: nowrap;
     line-height: 24px;
-
-    input[type="text"] {
-      cursor: pointer;
-      opacity: 0;
-      position: absolute;
-      width: 0;
-    }
   }
   .chosen-default {
     color: #999;
@@ -113,7 +108,7 @@ $chosen-sprite-retina: url('chosen-sprite@2x.png') !default;
       display: block;
       width: 100%;
       height: 100%;
-      background: $chosen-sprite no-repeat 0px 2px;
+      background: $chosen-sprite no-repeat 0 0;
     }
   }
   .chosen-search {
@@ -144,8 +139,8 @@ $chosen-sprite-retina: url('chosen-sprite@2x.png') !default;
   }
   &.chosen-container-single-nosearch .chosen-search {
     position: absolute;
-    opacity: 0;
-    pointer-events: none;
+    clip: rect(0,0,0,0);
+    clip-path: inset(100% 100%);
   }
 }
 /* @end */
@@ -425,6 +420,10 @@ $chosen-sprite-retina: url('chosen-sprite@2x.png') !default;
     background-image: $chosen-sprite-retina !important;
     background-size: 52px 37px !important;
     background-repeat: no-repeat !important;
+  }
+
+  .chosen-container-single .chosen-single div b {
+    background-position: 0 2px;
   }
 }
 /* @end */

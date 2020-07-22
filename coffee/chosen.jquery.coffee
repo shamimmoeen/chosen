@@ -50,9 +50,9 @@ class Chosen extends AbstractChosen
     @form_field_jq.hide().after @container
     @dropdown = @container.find('div.chosen-drop').first()
 
-    @search_field = @container.find('input.chosen-search-input')
-    @focus_field = @container.find('input.chosen-focus-input')
+    @search_field = @container.find('input').first()
     @search_results = @container.find('ul.chosen-results').first()
+    @search_results.attr('id', "#{@form_field.id}-chosen-search-results")
     this.search_field_scale()
 
     @search_no_results = @container.find('li.no-results').first()
@@ -64,6 +64,7 @@ class Chosen extends AbstractChosen
       @search_container = @container.find('div.chosen-search').first()
       @selected_item = @container.find('.chosen-single').first()
 
+    this.set_aria_labels()
     this.results_build()
     this.set_tab_index()
     this.set_label_behavior()
@@ -106,20 +107,8 @@ class Chosen extends AbstractChosen
     else
       @container.on 'click.chosen', (evt) -> evt.preventDefault(); return # gobble click of anchor
 
-      @focus_field.on 'blur.chosen', (evt) => this.input_blur(evt); return
-      @focus_field.on 'focus.chosen', (evt) => this.input_focus(evt); return
-
-      transfer_value = () =>
-        @search_field.val(@focus_field.val())
-        @focus_field.val('')
-
-      @focus_field.on 'keyup.chosen', (evt) => transfer_value(); this.keyup_checker(evt); return
-      @focus_field.on 'keydown.chosen', (evt) => transfer_value(); this.keydown_checker(evt); return
-      @focus_field.on 'cut.chosen', (evt) => setTimeout(transfer_value, 0); this.clipboard_event_checker(evt); return
-      @focus_field.on 'paste.chosen', (evt) => setTimeout(transfer_value, 0); this.clipboard_event_checker(evt); return
-
   destroy: ->
-    $(@container[0].ownerDocument).off 'click.chosen', @click_test_action
+    $(if @container[0].getRootNode? then @container[0].getRootNode() else @container[0].ownerDocument).off 'click.chosen', @click_test_action
     @form_field_label.off 'click.chosen' if @form_field_label.length > 0
 
     if @search_field[0].tabIndex
@@ -128,6 +117,20 @@ class Chosen extends AbstractChosen
     @container.remove()
     @form_field_jq.removeData('chosen')
     @form_field_jq.show()
+
+  set_aria_labels: ->
+    @search_field.attr "aria-owns", @search_results.attr "id"
+    if @form_field.attributes["aria-label"]
+      @search_field.attr "aria-label", @form_field.attributes["aria-label"]
+      if @form_field.attributes["aria-labelledby"]
+        @search_field.attr "aria-labelledby", @form_field.attributes["aria-labelledby"]
+    else if Object.prototype.hasOwnProperty.call(@form_field,'labels') && @form_field.labels.length
+      labelledbyList = ""
+      for label, i in @form_field.labels
+        if label.id is ""
+          label.id = "#{@form_field.id}-chosen-label-#{i}"
+        labelledbyList += @form_field.labels[i].id + " "
+      @search_field.attr "aria-labelledby", labelledbyList
 
   search_field_disabled: ->
     @is_disabled = @form_field.disabled || @form_field_jq.parents('fieldset').is(':disabled')
@@ -152,7 +155,7 @@ class Chosen extends AbstractChosen
     if not (evt? and ($ evt.target).hasClass "search-choice-close")
       if not @active_field
         @search_field.val "" if @is_multiple
-        $(@container[0].ownerDocument).on 'click.chosen', @click_test_action
+        $(if @container[0].getRootNode? then @container[0].getRootNode() else @container[0].ownerDocument).on 'click.chosen', @click_test_action
         this.results_show()
       else if not @is_multiple and evt and (($(evt.target)[0] == @selected_item[0]) || $(evt.target).parents("a.chosen-single").length)
         evt.preventDefault()
@@ -174,17 +177,18 @@ class Chosen extends AbstractChosen
     this.close_field() if not @active_field and @container.hasClass "chosen-container-active"
 
   close_field: ->
-    $(@container[0].ownerDocument).off "click.chosen", @click_test_action
+    $(if @container[0].getRootNode? then @container[0].getRootNode() else @container[0].ownerDocument).off "click.chosen", @click_test_action
 
     @active_field = false
     this.results_hide()
+    @search_field.attr("aria-expanded",false);
 
     @container.removeClass "chosen-container-active"
     this.clear_backstroke()
 
     this.show_search_field_default()
     this.search_field_scale()
-    @search_field.blur()
+    @search_field.trigger "blur"
 
   activate_field: ->
     return if @is_disabled
@@ -192,7 +196,11 @@ class Chosen extends AbstractChosen
     @container.addClass "chosen-container-active"
     @active_field = true
 
-    @search_field.focus()
+    @search_field.val(@search_field.val())
+    @search_field.attr("aria-expanded",true);
+    this.search_results.attr("aria-busy", false);
+    @search_field.trigger "focus"
+
 
   test_active_click: (evt) ->
     active_container = $(evt.target).closest('.chosen-container')
@@ -213,11 +221,9 @@ class Chosen extends AbstractChosen
       this.single_set_selected_text()
       if @disable_search or @form_field.options.length <= @disable_search_threshold
         @search_field[0].readOnly = true
-        @focus_field[0].readOnly = true
         @container.addClass "chosen-container-single-nosearch"
       else
         @search_field[0].readOnly = false
-        @focus_field[0].readOnly = false
         @container.removeClass "chosen-container-single-nosearch"
 
     this.update_results_content this.results_option_build({first:true})
@@ -234,6 +240,8 @@ class Chosen extends AbstractChosen
 
       @result_highlight = el
       @result_highlight.addClass "highlighted"
+
+      @search_field.attr("aria-activedescendant", @result_highlight.attr("id"))
 
       maxHeight = parseInt @search_results.css("maxHeight"), 10
       visible_top = @search_results.scrollTop()
@@ -259,7 +267,7 @@ class Chosen extends AbstractChosen
     @container.addClass "chosen-with-drop"
     @results_showing = true
 
-    @search_field.focus()
+    @search_field.trigger "focus"
     @search_field.val this.get_search_field_value()
 
     this.winnow_results()
@@ -268,11 +276,12 @@ class Chosen extends AbstractChosen
   update_results_content: (content) ->
     @search_results.html content
 
+  fire_search_updated: (search_term) ->
+    @form_field_jq.trigger("chosen:search_updated", {chosen: this, search_term: search_term})
+
   results_hide: ->
     if @results_showing
       this.result_clear_highlight()
-
-      setTimeout((() => @focus_field.focus()), 0)
 
       @container.removeClass "chosen-with-drop"
       @form_field_jq.trigger("chosen:hiding_dropdown", {chosen: this})
@@ -285,7 +294,6 @@ class Chosen extends AbstractChosen
       ti = @form_field.tabIndex
       @form_field.tabIndex = -1
       @search_field[0].tabIndex = ti
-      @focus_field[0]?.tabIndex = ti
 
   set_label_behavior: ->
     @form_field_label = @form_field_jq.parents("label") # first check for a parent label
@@ -308,7 +316,7 @@ class Chosen extends AbstractChosen
     if target.length
       @result_highlight = target
       this.result_select(evt)
-      @search_field.focus()
+      @search_field.trigger "focus"
 
   search_results_mouseover: (evt) ->
     target = if $(evt.target).hasClass "active-result" then $(evt.target) else $(evt.target).parents(".active-result").first()
@@ -337,7 +345,7 @@ class Chosen extends AbstractChosen
   choice_destroy: (link) ->
     if this.result_deselect( link[0].getAttribute("data-option-array-index") )
       if @active_field
-        @search_field.focus()
+        @search_field.trigger "focus"
       else
         this.show_search_field_default()
 
