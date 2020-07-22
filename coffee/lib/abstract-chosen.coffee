@@ -207,7 +207,7 @@ class AbstractChosen
 
           if option.search_match
             if query.length and not searchMatchFromValue
-              startpos = search_match.index
+              startpos = search_match.index highlightRegex
               prefix = text.slice(0, startpos)
               fix    = text.slice(startpos, startpos + query.length)
               suffix = text.slice(startpos + query.length)
