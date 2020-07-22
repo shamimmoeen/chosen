@@ -15,7 +15,7 @@
   <div id="container">
     <div id="content">
       <header>
-        <h1>Chosen <small>(<span id="latest-version">v1.8.2</span>)</small></h1>
+        <h1>Chosen <small>(<span id="latest-version">v1.8.7</span>)</small></h1>
       </header>
       <p>Chosen has a number of options and attributes that allow you to have full control of your select boxes.</p>
 
@@ -250,6 +250,11 @@
           <td>Triggered if <code class="language-javascript">max_selected_options</code> is set and that total is broken.</td>
         </tr>
         <tr>
+          <td>chosen:search_updated</td>
+          <td>Triggered when Chosen’s search results are updated after typing search term.
+            The event includes a corresponding <code class="language-javascript">search_term</code> parameter.</td>
+        </tr>
+        <tr>
           <td>chosen:showing_dropdown</td>
           <td>Triggered when Chosen’s dropdown is opened.</td>
         </tr>
@@ -287,7 +292,7 @@
         </tr>
         <tr>
           <td>chosen:activate</td>
-          <td>This is the equivalant of focusing a standard HTML select field. When activated, Chosen will capure keypress events as if you had clicked the field directly.</td>
+          <td>This is the equivalant of focusing a standard HTML select field. When activated, Chosen will capture keypress events as if you had clicked the field directly.</td>
         </tr>
         <tr>
           <td>chosen:open</td>
