@@ -16,10 +16,11 @@ class SelectParser
     @parsed.push
       array_index: group_position
       group: true
-      label: this.escapeExpression(group.label)
+      label: group.label
       title: group.title if group.title
       children: 0
-      disabled: group.disabled,
+      disabled: group.disabled
+      hidden: group.hidden
       classes: group.className
     this.add_option( option, group_position, group.disabled ) for option in group.childNodes
 
@@ -36,6 +37,7 @@ class SelectParser
           title: option.title if option.title
           selected: option.selected
           disabled: if group_disabled is true then group_disabled else option.disabled
+          hidden: option.hidden
           group_array_index: group_position
           group_label: if group_position? then @parsed[group_position].label else null
           classes: option.className
@@ -47,21 +49,6 @@ class SelectParser
           empty: true
           data: this.parseDataAttributes(option)
       @options_index += 1
-
-  escapeExpression: (text) ->
-    if not text? or text is false
-      return ""
-    unless /[\&\<\>\"\'\`]/.test(text)
-      return text
-    map =
-      "<": "&lt;"
-      ">": "&gt;"
-      '"': "&quot;"
-      "'": "&#x27;"
-      "`": "&#x60;"
-    unsafe_chars = /&(?!\w+;)|[\<\>\"\'\`]/g
-    text.replace unsafe_chars, (chr) ->
-      map[chr] || "&amp;"
 
   parseDataAttributes: (option) ->
     dataAttr = 'data-option-array-index' : this.parsed.length
