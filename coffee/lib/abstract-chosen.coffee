@@ -120,6 +120,7 @@ class AbstractChosen
     option_el.setAttribute("role", "option")
     option_el.id = "#{@form_field.id}-chosen-search-result-#{option.array_index}"
     option_el.title = option.title if option.title
+    option_el.setAttribute("data-value", option.value);
 
     this.outerHTML(option_el)
 
