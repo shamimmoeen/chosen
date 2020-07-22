@@ -344,7 +344,7 @@ class Chosen extends AbstractChosen
     if item.disabled
       choice.addClass 'search-choice-disabled'
     else
-      close_link = $('<button />', { type: 'button', tabindex: -1, class: 'search-choice-close', 'data-option-array-index': item.array_index })
+      close_link = $('<button />', { type: 'button', tabindex: -1, class: 'search-choice-close', 'data-option-array-index': item.data['option-array-index'] })
       close_link.on 'click.chosen', (evt) => this.choice_destroy_link_click(evt)
       choice.append close_link
     if @inherit_option_classes && item.classes
