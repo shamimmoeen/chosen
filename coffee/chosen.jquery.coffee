@@ -188,7 +188,7 @@ class Chosen extends AbstractChosen
 
     this.show_search_field_default()
     this.search_field_scale()
-    @search_field.blur()
+    @search_field.trigger "blur"
 
   activate_field: ->
     return if @is_disabled
@@ -199,7 +199,7 @@ class Chosen extends AbstractChosen
     @search_field.val(@search_field.val())
     @search_field.attr("aria-expanded",true);
     this.search_results.attr("aria-busy", false);
-    @search_field.focus()
+    @search_field.trigger "focus"
 
 
   test_active_click: (evt) ->
@@ -267,7 +267,7 @@ class Chosen extends AbstractChosen
     @container.addClass "chosen-with-drop"
     @results_showing = true
 
-    @search_field.focus()
+    @search_field.trigger "focus"
     @search_field.val this.get_search_field_value()
 
     this.winnow_results()
@@ -316,7 +316,7 @@ class Chosen extends AbstractChosen
     if target.length
       @result_highlight = target
       this.result_select(evt)
-      @search_field.focus()
+      @search_field.trigger "focus"
 
   search_results_mouseover: (evt) ->
     target = if $(evt.target).hasClass "active-result" then $(evt.target) else $(evt.target).parents(".active-result").first()
@@ -345,7 +345,7 @@ class Chosen extends AbstractChosen
   choice_destroy: (link) ->
     if this.result_deselect( link[0].getAttribute("data-option-array-index") )
       if @active_field
-        @search_field.focus()
+        @search_field.trigger "focus"
       else
         this.show_search_field_default()
 
