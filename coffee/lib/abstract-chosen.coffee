@@ -26,10 +26,12 @@ class AbstractChosen
     @disable_search = @options.disable_search || false
     @enable_split_word_search = if @options.enable_split_word_search? then @options.enable_split_word_search else true
     @group_search = if @options.group_search? then @options.group_search else true
+    @search_in_values = @options.search_in_values || false
     @search_contains = @options.search_contains || false
     @single_backstroke_delete = if @options.single_backstroke_delete? then @options.single_backstroke_delete else true
     @max_selected_options = @options.max_selected_options || Infinity
     @inherit_select_classes = @options.inherit_select_classes || false
+    @inherit_option_classes = @options.inherit_option_classes || false
     @display_selected_options = if @options.display_selected_options? then @options.display_selected_options else true
     @display_disabled_options = if @options.display_disabled_options? then @options.display_disabled_options else true
     @include_group_label_in_selected = @options.include_group_label_in_selected || false
@@ -51,7 +53,7 @@ class AbstractChosen
 
   choice_label: (item) ->
     if @include_group_label_in_selected and item.group_label?
-      "<b class='group-name'>#{item.group_label}</b>#{item.html}"
+      "<b class='group-name'>#{this.escape_html(item.group_label)}</b>#{item.html}"
     else
       item.html
 
@@ -68,6 +70,12 @@ class AbstractChosen
     if not @mouse_on_container
       @active_field = false
       setTimeout (=> this.blur_test()), 100
+
+  label_click_handler: (evt) =>
+    if @is_multiple
+      this.container_mousedown(evt)
+    else
+      this.activate_field()
 
   results_option_build: (options) ->
     content = ''
@@ -108,10 +116,13 @@ class AbstractChosen
 
     option_el = document.createElement("li")
     option_el.className = classes.join(" ")
-    option_el.style.cssText = option.style
+    option_el.style.cssText = option.style if option.style
     option_el.setAttribute("data-option-array-index", option.array_index)
-    option_el.innerHTML = option.search_text
+    option_el.innerHTML = option.highlighted_html or option.html
+    option_el.setAttribute("role", "option")
+    option_el.id = "#{@form_field.id}-chosen-search-result-#{option.array_index}"
     option_el.title = option.title if option.title
+    option_el.setAttribute("data-value", option.value);
 
     this.outerHTML(option_el)
 
@@ -125,7 +136,7 @@ class AbstractChosen
 
     group_el = document.createElement("li")
     group_el.className = classes.join(" ")
-    group_el.innerHTML = group.search_text
+    group_el.innerHTML = group.highlighted_html or this.escape_html(group.label)
     group_el.title = group.title if group.title
 
     this.outerHTML(group_el)
@@ -153,20 +164,23 @@ class AbstractChosen
     else
       this.results_show()
 
-  winnow_results: ->
+  winnow_results: (options) ->
     this.no_results_clear()
 
     results = 0
 
-    searchText = this.get_search_text()
-    escapedSearchText = searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
-    regex = this.get_search_regex(escapedSearchText)
-    highlightRegex = this.get_highlight_regex(escapedSearchText)
+    searchMatchFromValue = false
+    query = this.get_search_text()
+    escapedQuery = query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
+    regex = this.get_search_regex(escapedQuery)
+    highlightRegex = this.get_highlight_regex(escapedQuery)
 
     for option in @results_data
 
       option.search_match = false
       results_group = null
+      search_match = null
+      option.highlighted_html = ''
 
       if this.include_option_in_results(option)
 
@@ -179,17 +193,25 @@ class AbstractChosen
           results += 1 if results_group.active_options is 0 and results_group.search_match
           results_group.active_options += 1
 
-        option.search_text = if option.group then option.label else option.html
+        text = if option.group then option.label else option.text
 
         unless option.group and not @group_search
-          option.search_match = this.search_string_match(option.search_text, regex)
+          search_match = this.search_string_match(text, regex)
+          option.search_match = search_match?
+
+          if not option.search_match and @search_in_values
+            option.search_match = this.search_string_match(option.value, regex)
+            searchMatchFromValue = true
+
           results += 1 if option.search_match and not option.group
 
           if option.search_match
-            if searchText.length
-              startpos = option.search_text.search highlightRegex
-              text = option.search_text.substr(0, startpos + searchText.length) + '</em>' + option.search_text.substr(startpos + searchText.length)
-              option.search_text = text.substr(0, startpos) + '<em>' + text.substr(startpos)
+            if query.length and not searchMatchFromValue
+              startpos = search_match.index highlightRegex
+              prefix = text.slice(0, startpos)
+              fix    = text.slice(startpos, startpos + query.length)
+              suffix = text.slice(startpos + query.length)
+              option.highlighted_html = "#{this.escape_html(prefix)}<em>#{this.escape_html(fix)}</em>#{this.escape_html(suffix)}"
 
             results_group.group_match = true if results_group?
 
@@ -198,33 +220,30 @@ class AbstractChosen
 
     this.result_clear_highlight()
 
-    if results < 1 and searchText.length
+    if results < 1 and query.length
       this.update_results_content ""
-      this.no_results searchText
+      this.fire_search_updated query
+      this.no_results query
     else
       this.update_results_content this.results_option_build()
-      this.winnow_results_set_highlight()
+      this.fire_search_updated query
+      this.winnow_results_set_highlight() unless options?.skip_highlight
 
   get_search_regex: (escaped_search_string) ->
-    regex_anchor = if @search_contains then "" else "^"
+    regex_string = if @search_contains then escaped_search_string else "(^|\\s|\\b)#{escaped_search_string}[^\\s]*"
+    regex_string = "^#{regex_string}" unless @enable_split_word_search or @search_contains
     regex_flag = if @case_sensitive_search then "" else "i"
-    new RegExp(regex_anchor + escaped_search_string, regex_flag)
+    new RegExp(regex_string, regex_flag)
 
   get_highlight_regex: (escaped_search_string) ->
-    regex_anchor = if @search_contains then "" else "\\b"
-    regex_flag = if @case_sensitive_search then "" else "i"
-    new RegExp(regex_anchor + escaped_search_string, regex_flag)
+     regex_anchor = if @search_contains then "" else "\\b"
+     regex_flag = if @case_sensitive_search then "" else "i"
+     new RegExp(regex_anchor + escaped_search_string, regex_flag)
 
   search_string_match: (search_string, regex) ->
-    if regex.test search_string
-      return true
-    else if @enable_split_word_search and (search_string.indexOf(" ") >= 0 or search_string.indexOf("[") == 0)
-      #TODO: replace this substitution of /\[\]/ with a list of characters to skip.
-      parts = search_string.replace(/\[|\]/g, "").split(" ")
-      if parts.length
-        for part in parts
-          if regex.test part
-            return true
+    match = regex.exec(search_string)
+    match.index += 1 if !@search_contains && match?[1] # make up for lack of lookbehind operator in regex
+    match
 
   choices_count: ->
     return @selected_option_count if @selected_option_count?
@@ -237,6 +256,7 @@ class AbstractChosen
 
   choices_click: (evt) ->
     evt.preventDefault()
+    this.activate_field()
     this.results_show() unless @results_showing or @is_disabled
 
   keydown_checker: (evt) ->
@@ -297,6 +317,7 @@ class AbstractChosen
         break
 
   clipboard_event_checker: (evt) ->
+    return if @is_disabled
     setTimeout (=> this.results_search()), 50
 
   container_width: ->
@@ -306,6 +327,8 @@ class AbstractChosen
     return false if @is_multiple and (not @display_selected_options and option.selected)
     return false if not @display_disabled_options and option.disabled
     return false if option.empty
+    return false if option.hidden
+    return false if option.group_array_index? and @results_data[option.group_array_index].hidden
 
     return true
 
@@ -325,6 +348,39 @@ class AbstractChosen
     tmp = document.createElement("div")
     tmp.appendChild(element)
     tmp.innerHTML
+
+  get_single_html: ->
+    """
+      <a class="chosen-single chosen-default">
+        <span>#{@default_text}</span>
+        <div><b></b></div>
+      </a>
+      <div class="chosen-drop">
+        <div class="chosen-search">
+          <input class="chosen-search-input" type="text" autocomplete="off" aria-expanded="false" aria-haspopup="true" role="combobox" aria-autocomplete="list" autocomplete="off" role="listbox" />
+        </div>
+        <ul class="chosen-results"></ul>
+      </div>
+    """
+
+  get_multi_html: ->
+    """
+      <ul class="chosen-choices">
+        <li class="search-field">
+          <input class="chosen-search-input" type="text" autocomplete="off" placeholder="#{@default_text}" aria-expanded="false" aria-haspopup="true" role="combobox" aria-autocomplete="list" />
+        </li>
+      </ul>
+      <div class="chosen-drop">
+        <ul class="chosen-results" role="listbox"></ul>
+      </div>
+    """
+
+  get_no_results_html: (terms) ->
+    """
+      <li class="no-results">
+        #{@results_none_found} <span>#{this.escape_html(terms)}</span>
+      </li>
+    """
 
   # class methods and variables ============================================================
 
