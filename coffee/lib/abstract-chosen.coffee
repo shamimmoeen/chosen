@@ -30,6 +30,7 @@ class AbstractChosen
     @single_backstroke_delete = if @options.single_backstroke_delete? then @options.single_backstroke_delete else true
     @max_selected_options = @options.max_selected_options || Infinity
     @inherit_select_classes = @options.inherit_select_classes || false
+    @inherit_option_classes = @options.inherit_option_classes || false
     @display_selected_options = if @options.display_selected_options? then @options.display_selected_options else true
     @display_disabled_options = if @options.display_disabled_options? then @options.display_disabled_options else true
     @include_group_label_in_selected = @options.include_group_label_in_selected || false
@@ -51,7 +52,7 @@ class AbstractChosen
 
   choice_label: (item) ->
     if @include_group_label_in_selected and item.group_label?
-      "<b class='group-name'>#{item.group_label}</b>#{item.html}"
+      "<b class='group-name'>#{this.escape_html(item.group_label)}</b>#{item.html}"
     else
       item.html
 
@@ -114,10 +115,13 @@ class AbstractChosen
 
     option_el = document.createElement("li")
     option_el.className = classes.join(" ")
-    option_el.style.cssText = option.style
+    option_el.style.cssText = option.style if option.style
     option_el.setAttribute("data-option-array-index", option.array_index)
     option_el.innerHTML = option.highlighted_html or option.html
+    option_el.setAttribute("role", "option")
+    option_el.id = "#{@form_field.id}-chosen-search-result-#{option.array_index}"
     option_el.title = option.title if option.title
+    option_el.setAttribute("data-value", option.value);
 
     this.outerHTML(option_el)
 
@@ -159,7 +163,7 @@ class AbstractChosen
     else
       this.results_show()
 
-  winnow_results: ->
+  winnow_results: (options) ->
     this.no_results_clear()
 
     results = 0
@@ -211,10 +215,12 @@ class AbstractChosen
 
     if results < 1 and query.length
       this.update_results_content ""
+      this.fire_search_updated query
       this.no_results query
     else
       this.update_results_content this.results_option_build()
-      this.winnow_results_set_highlight()
+      this.fire_search_updated query
+      this.winnow_results_set_highlight() unless options?.skip_highlight
 
   get_search_regex: (escaped_search_string) ->
     regex_string = if @search_contains then escaped_search_string else "(^|\\s|\\b)#{escaped_search_string}[^\\s]*"
@@ -337,7 +343,7 @@ class AbstractChosen
       </a>
       <div class="chosen-drop">
         <div class="chosen-search">
-          <input class="chosen-search-input" type="text" autocomplete="off" />
+          <input class="chosen-search-input" type="text" autocomplete="off" aria-expanded="false" aria-haspopup="true" role="combobox" aria-autocomplete="list" autocomplete="off" role="listbox" />
         </div>
         <ul class="chosen-results"></ul>
       </div>
@@ -347,11 +353,11 @@ class AbstractChosen
     """
       <ul class="chosen-choices">
         <li class="search-field">
-          <input class="chosen-search-input" type="text" autocomplete="off" placeholder="#{@default_text}" />
+          <input class="chosen-search-input" type="text" autocomplete="off" placeholder="#{@default_text}" aria-expanded="false" aria-haspopup="true" role="combobox" aria-autocomplete="list" />
         </li>
       </ul>
       <div class="chosen-drop">
-        <ul class="chosen-results"></ul>
+        <ul class="chosen-results" role="listbox"></ul>
       </div>
     """
 
