@@ -328,7 +328,7 @@ class AbstractChosen
   container_width: ->
     return @options.width if @options.width?
     return "#{@form_field.offsetWidth}px" if @form_field.offsetWidth > 0
-    return "inherit"
+    return "auto"
 
   include_option_in_results: (option) ->
     return false if @is_multiple and (not @display_selected_options and option.selected)
