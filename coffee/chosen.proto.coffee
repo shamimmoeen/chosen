@@ -36,7 +36,8 @@ class @Chosen extends AbstractChosen
 
     @form_field.setStyle({
       position: 'absolute',
-      opacity: '0'
+      opacity: '0',
+      display: 'none'
     }).insert({ after: @container })
     @dropdown = @container.down('div.chosen-drop')
 
