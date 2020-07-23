@@ -14,7 +14,7 @@ GITHUB_URL=https://jjj:${GH_TOKEN}@github.com/jjj/chosen-package.git
 
 git clone $GITHUB_URL
 rm -rf chosen-package/*
-cp README.md public/*.json public/*.png public/*.js public/*.css public/LICENSE* chosen-package/
+cp README.md docs/*.json docs/*.png docs/*.js docs/*.css docs/LICENSE* chosen-package/
 cp package-travis.yml chosen-package/.travis.yml
 cd chosen-package
 

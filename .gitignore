@@ -1,10 +1,10 @@
 .DS_Store
 node_modules
 .project
-public/*.js
-public/*.css
-public/*.json
-public/LICENSE.md
+docs/*.js
+docs/*.css
+docs/*.json
+docs/LICENSE.md
 chosen*.zip
 .sass-cache
 .ruby-version

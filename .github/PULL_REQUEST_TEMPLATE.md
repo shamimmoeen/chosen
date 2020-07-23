@@ -14,7 +14,7 @@ Please double-check that:
   - [ ] You used [Grunt](https://github.com/jjj/chosen/blob/master/contributing.md#grunt) to build the JavaScript files and tested them locally.
   - [ ] You've updated both the jQuery *and* Prototype versions.
   - [ ] You haven't manually updated the version number in `package.json`.
-  - [ ] If necessary, you've updated [the documentation](https://github.com/jjj/chosen/blob/master/public/options.html).
+  - [ ] If necessary, you've updated [the documentation](https://github.com/jjj/chosen/blob/master/docs/options.html).
 
 See the [Pull Requests section of our Contributing Guidelines](https://github.com/jjj/chosen/blob/master/contributing.md#pull-requests) for more details.
 

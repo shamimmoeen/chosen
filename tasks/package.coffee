@@ -5,15 +5,15 @@ module.exports = (grunt) ->
 
   grunt.config 'dom_munger',
     latest_version:
-      src: ['public/index.html', 'public/index.proto.html', 'public/options.html']
+      src: ['docs/index.html', 'docs/index.proto.html', 'docs/options.html']
       options:
         callback: ($) ->
           $('#latest-version').text(grunt.config.get('version_tag'))
 
   grunt.config 'zip',
     chosen:
-      cwd: 'public/'
-      src: ['public/**/*']
+      cwd: 'docs/'
+      src: ['docs/**/*']
       dest: 'chosen_<%= version_tag %>.zip'
 
   grunt.config 'gh-pages',
@@ -40,7 +40,7 @@ module.exports = (grunt) ->
       main: extra.main[0]
       repository: pkg.repository
 
-    grunt.file.write('public/package.json', JSON.stringify(json, null, 2) + "\n")
+    grunt.file.write('docs/package.json', JSON.stringify(json, null, 2) + "\n")
 
   grunt.registerTask 'prep-release', ['build', 'dom_munger:latest_version', 'zip:chosen', 'package-npm']
   grunt.registerTask 'publish-release', ['gh-pages']
