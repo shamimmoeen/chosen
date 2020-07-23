@@ -201,7 +201,7 @@ class @Chosen extends AbstractChosen
     @search_field.writeAttribute("aria-expanded", "false")
 
     @container.removeClassName "chosen-container-active"
-    @container.removeClassName "chosen-with-dropup"
+    @container.removeClassName "chosen-dropup"
     this.clear_backstroke()
 
     this.show_search_field_default()
@@ -224,7 +224,7 @@ class @Chosen extends AbstractChosen
     @container.addClassName "chosen-container-active"
 
     if this.should_dropup()
-      @container.addClassName "chosen-with-dropup"
+      @container.addClassName "chosen-dropup"
 
     @active_field = true
 
@@ -294,7 +294,7 @@ class @Chosen extends AbstractChosen
       return false
 
     if this.should_dropup()
-      @container.addClassName "chosen-with-dropup"
+      @container.addClassName "chosen-dropup"
 
     @container.addClassName "chosen-with-drop"
     @results_showing = true
@@ -316,7 +316,7 @@ class @Chosen extends AbstractChosen
       this.result_clear_highlight()
 
       @container.removeClassName "chosen-with-drop"
-      @container.removeClassName "chosen-with-dropup"
+      @container.removeClassName "chosen-dropup"
       @form_field.fire("chosen:hiding_dropdown", {chosen: this})
 
     @results_showing = false

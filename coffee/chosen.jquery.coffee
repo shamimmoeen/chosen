@@ -193,7 +193,7 @@ class Chosen extends AbstractChosen
     @search_field.attr("aria-expanded",false);
 
     @container.removeClass "chosen-container-active"
-    @container.removeClass "chosen-with-dropup"
+    @container.removeClass "chosen-dropup"
     this.clear_backstroke()
 
     this.show_search_field_default()
@@ -217,7 +217,7 @@ class Chosen extends AbstractChosen
     @container.addClass "chosen-container-active"
 
     if this.should_dropup()
-      @container.addClass "chosen-with-dropup"
+      @container.addClass "chosen-dropup"
 
     @active_field = true
 
@@ -290,7 +290,7 @@ class Chosen extends AbstractChosen
       return false
 
     if this.should_dropup()
-      @container.addClass "chosen-with-dropup"
+      @container.addClass "chosen-dropup"
 
     @container.addClass "chosen-with-drop"
     @results_showing = true
@@ -312,7 +312,7 @@ class Chosen extends AbstractChosen
       this.result_clear_highlight()
 
       @container.removeClass "chosen-with-drop"
-      @container.removeClass "chosen-with-dropup"
+      @container.removeClass "chosen-dropup"
       @form_field_jq.trigger("chosen:hiding_dropdown", {chosen: this})
 
     @results_showing = false
@@ -370,6 +370,7 @@ class Chosen extends AbstractChosen
       close_link = $('<button />', { type: 'button', tabindex: -1, class: 'search-choice-close', 'data-option-array-index': item.data['option-array-index'] })
       close_link.on 'click.chosen', (evt) => this.choice_destroy_link_click(evt)
       choice.append close_link
+
     if @inherit_option_classes && item.classes
       choice[0].classList.add item.classes
 

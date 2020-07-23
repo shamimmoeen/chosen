@@ -14,7 +14,7 @@ $chosen-sprite-retina: url('chosen-sprite@2x.png') !default;
   .chosen-drop {
     position: absolute;
     top: 100%;
-    z-index: 1010;
+    z-index: 1011;
     width: 100%;
     border: 1px solid #aaa;
     border-top: 0;
@@ -27,10 +27,10 @@ $chosen-sprite-retina: url('chosen-sprite@2x.png') !default;
     clip: auto;
     clip-path: none;
   }
-  &.chosen-with-dropup {
+  &.chosen-dropup {
     .chosen-choices,
     .chosen-single {
-      z-index: 1011;
+      z-index: 1010;
     }
     .chosen-drop {
       top: auto;
@@ -132,7 +132,7 @@ $chosen-sprite-retina: url('chosen-sprite@2x.png') !default;
   }
   .chosen-search {
     position: relative;
-    z-index: 1010;
+    z-index: 1011;
     margin: 0;
     padding: 3px 4px;
     white-space: nowrap;
@@ -163,12 +163,12 @@ $chosen-sprite-retina: url('chosen-sprite@2x.png') !default;
       clip: rect(0,0,0,0);
 	  clip-path: inset(100% 100%);
     }
-    &.chosen-with-dropup {
+    &.chosen-dropup {
       .chosen-results {
         padding-top: 4px;
       }
       .chosen-single {
-        z-index: 1011
+        z-index: 1010
       }
     }
   }
@@ -303,7 +303,7 @@ $chosen-sprite-retina: url('chosen-sprite@2x.png') !default;
       }
     }
   }
-  &.chosen-with-dropup {
+  &.chosen-dropup {
     .chosen-drop {
       border-radius: 0;
     }
@@ -343,7 +343,7 @@ $chosen-sprite-retina: url('chosen-sprite@2x.png') !default;
         background-position: -18px 2px;
       }
     }
-    &.chosen-with-dropup {
+    &.chosen-dropup {
       .chosen-single {
         border-radius: 0 0 5px 5px;
       }
