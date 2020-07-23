@@ -1,7 +1,7 @@
 {
-  "author": "harvest",
+  "author": "jjj",
   "name": "chosen",
-  "version": "1.8.7",
+  "version": "2.0.0",
   "description": "Chosen is a JavaScript plugin that makes select boxes user-friendly. It is currently available in both jQuery and Prototype flavors.",
   "keywords": [
     "select",
@@ -13,7 +13,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/harvesthq/chosen.git"
+    "url": "https://github.com/jjj/chosen.git"
   },
   "engines": {
     "node": ">=4"
@@ -45,6 +45,10 @@
   },
   "contributors": [
     {
+      "name": "John James Jacoby",
+      "url": "https://github.com/jjj"
+    },
+    {
       "name": "Patrick Filler",
       "url": "https://github.com/pfiller"
     },
@@ -63,15 +67,15 @@
   ],
   "license": "MIT",
   "homepage": "https://harvesthq.github.io/chosen/",
-  "bugs": "https://github.com/harvesthq/chosen/issues",
+  "bugs": "https://github.com/jjj/chosen/issues",
   "_extra": {
     "title": "Chosen",
     "license": {
       "type": "MIT",
-      "url": "https://github.com/harvesthq/chosen/blob/master/LICENSE.md"
+      "url": "https://github.com/jjj/chosen/blob/master/LICENSE.md"
     },
     "links": {
-      "download": "https://github.com/harvesthq/chosen/releases",
+      "download": "https://github.com/jjj/chosen/releases",
       "docs": "https://harvesthq.github.io/chosen/"
     },
     "main": [

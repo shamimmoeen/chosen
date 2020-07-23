@@ -10,7 +10,7 @@ if [ $CURRENT_BRANCH != 'master' ] ; then
 fi
 
 CHOSEN_VERSION=`git tag --sort=v:refname | tail -1`
-GITHUB_URL=https://pfiller:${GH_TOKEN}@github.com/harvesthq/chosen-package.git
+GITHUB_URL=https://jjj:${GH_TOKEN}@github.com/jjj/chosen-package.git
 
 git clone $GITHUB_URL
 rm -rf chosen-package/*

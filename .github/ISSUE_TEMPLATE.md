@@ -1,5 +1,5 @@
 <!---
-Please read our Contributing Guidelines before opening this issue: https://github.com/harvesthq/chosen/blob/master/contributing.md
+Please read our Contributing Guidelines before opening this issue: https://github.com/jjj/chosen/blob/master/contributing.md
 
 Specifically, please note that the issue tracker is intended for bug reports and specific feature requests.
 
