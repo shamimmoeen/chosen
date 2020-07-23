@@ -159,10 +159,9 @@ class @Chosen extends AbstractChosen
       @selected_item.observe 'focus', this.activate_field
 
   container_mousedown: (evt) ->
-    return if @is_disabled
-
-    if evt and evt.type in ['mousedown', 'touchstart'] and not @results_showing
-      evt.preventDefault()
+    if not @is_disabled and (evt and this.mousedown_checker(evt) == 'left')
+      if evt and evt.type in ['mousedown', 'touchstart'] and not @results_showing
+        evt.stop()
 
     if not (evt? and evt.target.hasClassName "search-choice-close")
       if not @active_field
@@ -234,7 +233,7 @@ class @Chosen extends AbstractChosen
     @search_field.focus()
 
   test_active_click: (evt) ->
-    if evt.target.up('.chosen-container') is @container
+    if this.mousedown_checker(evt) == 'left' and evt.target.up('.chosen-container') is @container
       @active_field = true
     else
       this.close_field()
@@ -351,11 +350,12 @@ class @Chosen extends AbstractChosen
       @search_field.removeClassName "default"
 
   search_results_mouseup: (evt) ->
-    target = if evt.target.hasClassName("active-result") then evt.target else evt.target.up(".active-result")
-    if target
-      @result_highlight = target
-      this.result_select(evt)
-      @search_field.focus()
+    if this.mousedown_checker(evt) == 'left'
+      target = if evt.target.hasClassName("active-result") then evt.target else evt.target.up(".active-result")
+      if target
+        @result_highlight = target
+        this.result_select(evt)
+        @search_field.focus()
 
   search_results_mouseover: (evt) ->
     target = if evt.target.hasClassName("active-result") then evt.target else evt.target.up(".active-result")

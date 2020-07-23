@@ -248,7 +248,7 @@ class AbstractChosen
 
   search_string_match: (search_string, regex) ->
     match = regex.exec(search_string)
-    match.index += 1 if !@search_contains && match?[1] # make up for lack of lookbehind operator in regex
+    match.index += 1 if not @search_contains && match?[1] # make up for lack of lookbehind operator in regex
     match
 
   choices_count: ->
@@ -264,6 +264,27 @@ class AbstractChosen
     evt.preventDefault()
     this.activate_field()
     this.results_show() unless @results_showing or @is_disabled
+
+  mousedown_checker: (evt) ->
+    evt = evt || window.event
+    mousedown_type = null
+    if (!evt.which and evt.button != undefined)
+      evt.which = ( evt.button & 1 ? 1 : ( evt.button & 2 ? 3 : ( evt.button & 4 ? 2 : 0 ) ) )
+
+    switch evt.which
+      when 1
+        mousedown_type = 'left'
+        break
+      when 2
+        mousedown_type = 'right'
+        break
+      when 3
+        mousedown_type = 'middle'
+        break
+      else
+        mousedown_type = 'other'
+
+    return mousedown_type
 
   keydown_checker: (evt) ->
     stroke = evt.which ? evt.keyCode

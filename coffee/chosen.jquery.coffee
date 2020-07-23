@@ -153,7 +153,9 @@ class Chosen extends AbstractChosen
       @selected_item.on 'focus.chosen', this.activate_field
 
   container_mousedown: (evt) ->
-    return if @is_disabled
+    if not @is_disabled and (evt and this.mousedown_checker(evt) == 'left')
+      if evt and evt.type is "mousedown" and not @results_showing
+        evt.preventDefault()
 
     if evt and evt.type in ['mousedown', 'touchstart'] and not @results_showing
       evt.preventDefault()
@@ -227,7 +229,7 @@ class Chosen extends AbstractChosen
 
   test_active_click: (evt) ->
     active_container = $(evt.target).closest('.chosen-container')
-    if active_container.length and @container[0] == active_container[0]
+    if this.mousedown_checker(evt) == 'left' and active_container.length and @container[0] == active_container[0]
       @active_field = true
     else
       this.close_field()
@@ -345,11 +347,12 @@ class Chosen extends AbstractChosen
       @search_field.removeClass "default"
 
   search_results_mouseup: (evt) ->
-    target = if $(evt.target).is ".active-result,.group-result" then $(evt.target) else $(evt.target).parents(".active-result").first()
-    if target.length
-      @result_highlight = target
-      this.result_select(evt)
-      @search_field.trigger "focus"
+    if this.mousedown_checker(evt) == 'left'
+      target = if $(evt.target).is ".active-result,.group-result" then $(evt.target) else $(evt.target).parents(".active-result").first()
+      if target.length
+        @result_highlight = target
+        this.result_select(evt)
+        @search_field.focus()
 
   search_results_mouseover: (evt) ->
     target = if $(evt.target).hasClass "active-result" then $(evt.target) else $(evt.target).parents(".active-result").first()
