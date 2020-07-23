@@ -110,7 +110,6 @@ class AbstractChosen
     content
 
   result_add_option: (option) ->
-    return '' unless option.search_match
     return '' unless this.include_option_in_results(option)
 
     classes = []
@@ -431,6 +430,7 @@ class AbstractChosen
     return false if not @display_disabled_options and option.disabled
     return false if option.empty
     return false if option.hidden
+    return false if this.get_search_text() and not option.search_match
     return false if option.group_array_index? and @results_data[option.group_array_index].hidden
 
     return true
