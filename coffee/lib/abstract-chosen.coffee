@@ -3,6 +3,7 @@ class AbstractChosen
   constructor: (@form_field, @options={}) ->
     return unless AbstractChosen.browser_is_supported()
     @is_multiple = @form_field.multiple
+    @can_select_by_group = @form_field.getAttribute('select-by-group') isnt null
     this.set_default_text()
     this.set_default_values()
 
@@ -26,16 +27,22 @@ class AbstractChosen
     @disable_search = @options.disable_search || false
     @enable_split_word_search = if @options.enable_split_word_search? then @options.enable_split_word_search else true
     @group_search = if @options.group_search? then @options.group_search else true
+    @search_in_values = @options.search_in_values || false
     @search_contains = @options.search_contains || false
     @single_backstroke_delete = if @options.single_backstroke_delete? then @options.single_backstroke_delete else true
     @max_selected_options = @options.max_selected_options || Infinity
     @inherit_select_classes = @options.inherit_select_classes || false
+    @inherit_option_classes = @options.inherit_option_classes || false
     @display_selected_options = if @options.display_selected_options? then @options.display_selected_options else true
     @display_disabled_options = if @options.display_disabled_options? then @options.display_disabled_options else true
+    @parser_config = @options.parser_config || {}
     @include_group_label_in_selected = @options.include_group_label_in_selected || false
     @max_shown_results = @options.max_shown_results || Number.POSITIVE_INFINITY
     @case_sensitive_search = @options.case_sensitive_search || false
     @hide_results_on_select = if @options.hide_results_on_select? then @options.hide_results_on_select else true
+    @create_option = @options.create_option || false
+    @persistent_create_option = @options.persistent_create_option || false
+    @skip_no_results = @options.skip_no_results || false
 
   set_default_text: ->
     if @form_field.getAttribute("data-placeholder")
@@ -48,6 +55,7 @@ class AbstractChosen
     @default_text = this.escape_html(@default_text)
 
     @results_none_found = @form_field.getAttribute("data-no_results_text") || @options.no_results_text || AbstractChosen.default_no_result_text
+    @create_option_text = @form_field.getAttribute("data-create_option_text") || @options.create_option_text || AbstractChosen.default_create_option_text
 
   choice_label: (item) ->
     if @include_group_label_in_selected and item.group_label?
@@ -115,8 +123,14 @@ class AbstractChosen
     option_el = document.createElement("li")
     option_el.className = classes.join(" ")
     option_el.style.cssText = option.style if option.style
+    for attrName of option.data
+      if option.data.hasOwnProperty(attrName)
+        option_el.setAttribute(attrName, option.data[attrName])
     option_el.setAttribute("data-option-array-index", option.array_index)
+    option_el.setAttribute("data-value", option.value);
+    option_el.setAttribute("role", "option")
     option_el.innerHTML = option.highlighted_html or option.html
+    option_el.id = "#{@form_field.id}-chosen-search-result-#{option.array_index}"
     option_el.title = option.title if option.title
 
     this.outerHTML(option_el)
@@ -135,6 +149,9 @@ class AbstractChosen
     group_el.title = group.title if group.title
 
     this.outerHTML(group_el)
+
+  append_option: (option) ->
+    this.select_append_option(option)
 
   results_update_field: ->
     this.set_default_text()
@@ -158,15 +175,20 @@ class AbstractChosen
       this.winnow_results()
     else
       this.results_show()
+    @form_field_jq.trigger("chosen:search", {chosen: this})
 
   winnow_results: (options) ->
     this.no_results_clear()
 
     results = 0
+    exact_result = false
 
+    searchMatchFromValue = false
     query = this.get_search_text()
     escapedQuery = query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
     regex = this.get_search_regex(escapedQuery)
+    exactRegex = new RegExp("^#{escapedQuery}$")
+    highlightRegex = this.get_highlight_regex(escapedQuery)
 
     for option in @results_data
 
@@ -192,11 +214,17 @@ class AbstractChosen
           search_match = this.search_string_match(text, regex)
           option.search_match = search_match?
 
+          if not option.search_match and @search_in_values
+            option.search_match = this.search_string_match(option.value, regex)
+            searchMatchFromValue = true
+
           results += 1 if option.search_match and not option.group
 
+          exact_result = exact_result || exactRegex.test option.html
+
           if option.search_match
-            if query.length
-              startpos = search_match.index
+            if query.length and not searchMatchFromValue
+              startpos = search_match.index highlightRegex
               prefix = text.slice(0, startpos)
               fix    = text.slice(startpos, startpos + query.length)
               suffix = text.slice(startpos + query.length)
@@ -211,10 +239,15 @@ class AbstractChosen
 
     if results < 1 and query.length
       this.update_results_content ""
-      this.no_results query
+      this.fire_search_updated query
+      this.no_results query unless @create_option and @skip_no_results
     else
       this.update_results_content this.results_option_build()
+      this.fire_search_updated query
       this.winnow_results_set_highlight() unless options?.skip_highlight
+
+    if @create_option and (results < 1 or (!exact_result and @persistent_create_option)) and query.length
+      this.show_create_option( query )
 
   get_search_regex: (escaped_search_string) ->
     regex_string = if @search_contains then escaped_search_string else "(^|\\s|\\b)#{escaped_search_string}[^\\s]*"
@@ -275,7 +308,7 @@ class AbstractChosen
     chars.push { val: "z", let: "(ź|ż|ž)" }
     chars.push { val: "f", let: "(ƒ)" }
     chars
-  
+
   escape_special_char: (str) ->
     specialChars = this.get_list_special_char()
     for special in specialChars
@@ -285,8 +318,7 @@ class AbstractChosen
   search_string_match: (search_string, regex) ->
     match = regex.exec(search_string)
     match = regex.exec(this.escape_special_char(search_string)) if !@case_sensitive_search && match?
-    match.index += 1 if !@search_contains && match?[1] # make up for lack of lookbehind operator in regex
-    match
+    match.index += 1 if not @search_contains && match?[1] # make up for lack of lookbehind operator in regex
 
   choices_count: ->
     return @selected_option_count if @selected_option_count?
@@ -301,6 +333,27 @@ class AbstractChosen
     evt.preventDefault()
     this.activate_field()
     this.results_show() unless @results_showing or @is_disabled
+
+  mousedown_checker: (evt) ->
+    evt = evt || window.event
+    mousedown_type = null
+    if (!evt.which and evt.button != undefined)
+      evt.which = ( evt.button & 1 ? 1 : ( evt.button & 2 ? 3 : ( evt.button & 4 ? 2 : 0 ) ) )
+
+    switch evt.which
+      when 1
+        mousedown_type = 'left'
+        break
+      when 2
+        mousedown_type = 'right'
+        break
+      when 3
+        mousedown_type = 'middle'
+        break
+      else
+        mousedown_type = 'other'
+
+    return mousedown_type
 
   keydown_checker: (evt) ->
     stroke = evt.which ? evt.keyCode
@@ -364,12 +417,16 @@ class AbstractChosen
     setTimeout (=> this.results_search()), 50
 
   container_width: ->
-    return if @options.width? then @options.width else "#{@form_field.offsetWidth}px"
+    return @options.width if @options.width?
+    return "#{@form_field.offsetWidth}px" if @form_field.offsetWidth > 0
+    return "auto"
 
   include_option_in_results: (option) ->
     return false if @is_multiple and (not @display_selected_options and option.selected)
     return false if not @display_disabled_options and option.disabled
     return false if option.empty
+    return false if option.hidden
+    return false if option.group_array_index? and @results_data[option.group_array_index].hidden
 
     return true
 
@@ -398,7 +455,7 @@ class AbstractChosen
       </a>
       <div class="chosen-drop">
         <div class="chosen-search">
-          <input class="chosen-search-input" type="text" autocomplete="off" />
+          <input class="chosen-search-input" type="text" autocomplete="off" aria-expanded="false" aria-haspopup="true" role="combobox" aria-autocomplete="list" autocomplete="off" role="listbox" />
         </div>
         <ul class="chosen-results"></ul>
       </div>
@@ -408,11 +465,11 @@ class AbstractChosen
     """
       <ul class="chosen-choices">
         <li class="search-field">
-          <input class="chosen-search-input" type="text" autocomplete="off" value="#{@default_text}" />
+          <input class="chosen-search-input" type="text" autocomplete="off" placeholder="#{@default_text}" aria-expanded="false" aria-haspopup="true" role="combobox" aria-autocomplete="list" />
         </li>
       </ul>
       <div class="chosen-drop">
-        <ul class="chosen-results"></ul>
+        <ul class="chosen-results" role="listbox"></ul>
       </div>
     """
 
@@ -421,6 +478,16 @@ class AbstractChosen
       <li class="no-results">
         #{@results_none_found} <span>#{this.escape_html(terms)}</span>
       </li>
+    """
+
+  get_option_html: ({ value, text }) ->
+    """
+      <option value="#{value}" selected>#{text}</option>
+    """
+
+  get_create_option_html: (terms) ->
+    """
+      <li class="create-option active-result"><a>#{@create_option_text}</a>: "#{this.escape_html(terms)}"</li>
     """
 
   # class methods and variables ============================================================
@@ -440,4 +507,4 @@ class AbstractChosen
   @default_multiple_text: "Select Some Options"
   @default_single_text: "Select an Option"
   @default_no_result_text: "No results match"
-
+  @default_create_option_text: "Add Option"
