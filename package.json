@@ -21,7 +21,9 @@
   "scripts": {
     "test": "grunt test"
   },
-  "dependencies": {},
+  "dependencies": {
+    "coffeescript": "^2.5.1"
+  },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
     "coffee-script": ">= 1.6",
