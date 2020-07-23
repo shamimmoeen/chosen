@@ -51,7 +51,7 @@ class SelectParser
       @options_index += 1
 
   parse_data_attributes: (option) ->
-    dataAttr = 'data-option-array-index' : this.parsed.length
+    dataAttr = { 'data-option-array-index' : this.parsed.length, 'data-value' : option.value }
     if @copy_data_attributes && option
       for attr in option.attributes
         attrName = attr.nodeName

@@ -126,8 +126,6 @@ class AbstractChosen
     for attrName of option.data
       if option.data.hasOwnProperty(attrName)
         option_el.setAttribute(attrName, option.data[attrName])
-    option_el.setAttribute("data-option-array-index", option.array_index)
-    option_el.setAttribute("data-value", option.value);
     option_el.setAttribute("role", "option")
     option_el.innerHTML = option.highlighted_html or option.html
     option_el.id = "#{@form_field.id}-chosen-search-result-#{option.array_index}"
