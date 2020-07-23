@@ -42,23 +42,5 @@ module.exports = (grunt) ->
 
     grunt.file.write('public/package.json', JSON.stringify(json, null, 2) + "\n")
 
-  grunt.registerTask 'package-bower', 'Generate bower manifest', () ->
-    pkg = grunt.config.get('pkg')
-    extra = pkg._extra
-
-    json =
-      name: pkg.name
-      description: pkg.description
-      keywords: pkg.keywords
-      homepage: pkg.homepage
-      license: extra.license.url
-      authors: pkg.contributors
-      dependencies: pkg.dependencies
-      main: extra.main
-      ignore: []
-      repository: pkg.repository
-
-    grunt.file.write('public/bower.json', JSON.stringify(json, null, 2) + "\n")
-
-  grunt.registerTask 'prep-release', ['build', 'dom_munger:latest_version', 'zip:chosen', 'package-npm', 'package-bower']
+  grunt.registerTask 'prep-release', ['build', 'dom_munger:latest_version', 'zip:chosen', 'package-npm']
   grunt.registerTask 'publish-release', ['gh-pages']
