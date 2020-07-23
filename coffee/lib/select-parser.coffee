@@ -33,7 +33,7 @@ class SelectParser
           options_index: @options_index
           value: option.value
           text: option.text
-          html: option.innerHTML
+          html: option.innerHTML.replace(/^\s+|\s+$/g, '')
           title: option.title if option.title
           selected: option.selected
           disabled: if group_disabled is true then group_disabled else option.disabled
