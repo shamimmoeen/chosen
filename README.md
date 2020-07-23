@@ -22,10 +22,8 @@ npm install chosen-js
 To install with Composer:
 
 ```
-composer require harvesthq/chosen
+composer require jjj/chosen
 ```
-
-The compiled files for these packages are automatically generated and stored in a [2nd Chosen repository](https://github.com/jjj/chosen-package). No pull requests will be accepted to that repository.
 
 ### Contributing to this project
 
@@ -41,5 +39,5 @@ We welcome all to participate in making Chosen the best software it can be. The 
 - Concept and development by [Patrick Filler](http://patrickfiller.com) for [Harvest](http://getharvest.com/)
 - Design and CSS by [Matthew Lettini](http://matthewlettini.com/)
 - 1.8.x and earlier maintained by [@pfiller](http://github.com/pfiller), [@kenearley](http://github.com/kenearley), [@stof](http://github.com/stof), [@koenpunt](http://github.com/koenpunt), and [@tjschuck](http://github.com/tjschuck)
-- 2.0.x and later maintained by [@JJJ](http://github.com/JJJ)
+- 2.0.x and later maintained by [@JJJ](http://github.com/JJJ) and contributors
 - Chosen includes [contributions by many fine folks](https://github.com/harvesthq/chosen/contributors)
