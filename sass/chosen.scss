@@ -310,6 +310,14 @@ $chosen-sprite-retina: url('chosen-sprite@2x.png') !default;
       cursor: default;
 	}
   }
+  &.chosen-dropup {
+    .chosen-results {
+      padding-top: 4px;
+    }
+    .chosen-single {
+      z-index: 1010
+    }
+  }
 }
 /* @end */
 
