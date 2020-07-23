@@ -13,7 +13,7 @@ _**Please Note:** These guidelines are adapted from [@necolas](https://github.co
 an excellent starting point for contributing to any open source project._
 
 
-## Using the issue tracker
+## Using the issue tracker [![Open Source Helpers](https://www.codetriage.com/harvesthq/chosen/badges/users.svg)](https://www.codetriage.com/harvesthq/chosen)
 
 The [issue tracker](https://github.com/harvesthq/chosen/issues) is the
 preferred channel for [bug reports](#bugs), [features requests](#features)
@@ -28,6 +28,7 @@ following restrictions:
 * Please **do not** derail or troll issues. Keep the discussion on topic and
   respect the opinions of others.
 
+You can triage issues which may include reproducing bug reports or asking for vital information, such as version numbers or reproduction instructions. If you would like to start triaging issues, one easy way to get started is to [subscribe to chosen on CodeTriage](https://www.codetriage.com/harvesthq/chosen).
 
 <a name="bugs"></a>
 ## Bug reports
@@ -44,7 +45,7 @@ Guidelines for bug reports:
    repository's latest `master` changes.
 
 3. **Isolate the problem** &mdash; ideally create a [reduced test
-   case](http://css-tricks.com/6263-reduced-test-cases/) and a live example
+   case](https://css-tricks.com/reduced-test-cases/) and a live example
    (perhaps a [fiddle](http://jsfiddle.net)).
 
 A good bug report shouldn't leave others needing to contact you for more
@@ -175,16 +176,19 @@ license your work under the [MIT License](http://en.wikipedia.org/wiki/MIT_Licen
 4. Don't manually update the version number in `package.json`. This is done using a Grunt task on deployment.
 
 <a name="grunt"></a>
-#### Using CoffeeScript and Grunt
+#### Grunt tasks: Running Tests and building Chosen
 
 
 To install all development dependencies, in the project's root directory, run
 
-    npm install && gem install bundler && bundle install
+    npm install
 
-Once you're configured, building the JavaScript from the command line is easy:
+Once you're configured, `grunt` tasks are available:
+
+    grunt test                 # run the tests in spec/
 
     grunt build                # build Chosen from source
+
     grunt watch                # watch coffee/ for changes and build Chosen
 
 If you're interested, you can find the task in [Gruntfile.coffee](https://github.com/harvesthq/chosen/blob/master/Gruntfile.coffee).

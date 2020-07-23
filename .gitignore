@@ -3,8 +3,9 @@ node_modules
 .project
 public/*.js
 public/*.css
-public/bower.json
-chosen.zip
+public/*.json
+public/LICENSE.md
+chosen*.zip
 .sass-cache
 .ruby-version
 .rbenv-gemsets
