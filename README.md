@@ -16,7 +16,7 @@ https://github.com/jjj/chosen/releases/
 To install with npm:
 
 ```
-npm install chosen-js
+npm install chosen-jjj
 ```
 
 To install with Composer:
