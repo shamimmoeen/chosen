@@ -59,7 +59,7 @@ class SelectParser
           dataAttr[ attrName ] = attr.nodeValue
     return dataAttr
 
-  select_to_array: (select, options) ->
-    parser = new SelectParser(options)
-    parser.add_node( child ) for child in select.childNodes
-    parser.parsed
+SelectParser.select_to_array = (select, options) ->
+  parser = new SelectParser(options)
+  parser.add_node( child ) for child in select.childNodes
+  parser.parsed
