@@ -149,12 +149,6 @@ i { font-style: italic; }
 .oss-bar ul li a:hover {
   margin-top: 0px;
 }
-.oss-bar a.harvest {
-  width: 196px;
-  background-color: #F36C00;
-  background-position: -142px 22px;
-  padding-right: 22px; /* optical illusion */
-}
 .oss-bar a.fork {
   width: 162px;
   background-color: #333333;
