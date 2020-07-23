@@ -238,7 +238,7 @@ class Chosen extends AbstractChosen
     @parsing = true
     @selected_option_count = null
 
-    @results_data = SelectParser.select_to_array(@form_field, @parser_config)
+    @results_data = SelectParser.select_to_array @form_field, @parser_config
 
     if @is_multiple
       @search_choices.find("li.search-choice").remove()
@@ -458,7 +458,7 @@ class Chosen extends AbstractChosen
       else
         this.single_set_selected_text(this.choice_label(item))
 
-      if @is_multiple && (!@hide_results_on_select || (evt.metaKey or evt.ctrlKey))
+      if @is_multiple && (not @hide_results_on_select || (evt.metaKey or evt.ctrlKey))
         if evt.metaKey or evt.ctrlKey
           this.winnow_results(skip_highlight: true)
         else

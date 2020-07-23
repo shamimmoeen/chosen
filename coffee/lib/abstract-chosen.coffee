@@ -322,7 +322,7 @@ class AbstractChosen
 
   search_string_match: (search_string, regex) ->
     match = regex.exec(search_string)
-    match = regex.exec(this.escape_special_char(search_string)) if !@case_sensitive_search && match?
+    match = regex.exec(this.escape_special_char(search_string)) if not @case_sensitive_search && match?
     match.index += 1 if not @search_contains && match?[1] # make up for lack of lookbehind operator in regex
 
   choices_count: ->

@@ -42,15 +42,15 @@ class SelectParser
           group_label: if group_position? then @parsed[group_position].label else null
           classes: option.className
           style: option.style.cssText
-          data: this.parseDataAttributes(option)
+          data: this.parse_data_attributes(option)
       else
         @parsed.push
           options_index: @options_index
           empty: true
-          data: this.parseDataAttributes(option)
+          data: this.parse_data_attributes(option)
       @options_index += 1
 
-  parseDataAttributes: (option) ->
+  parse_data_attributes: (option) ->
     dataAttr = 'data-option-array-index' : this.parsed.length
     if @copy_data_attributes && option
       for attr in option.attributes
@@ -59,7 +59,7 @@ class SelectParser
           dataAttr[ attrName ] = attr.nodeValue
     return dataAttr
 
-SelectParser.select_to_array = (select, options) ->
-  parser = new SelectParser(options)
-  parser.add_node( child ) for child in select.childNodes
-  parser.parsed
+  select_to_array: (select, options) ->
+    parser = new SelectParser(options)
+    parser.add_node( child ) for child in select.childNodes
+    parser.parsed
