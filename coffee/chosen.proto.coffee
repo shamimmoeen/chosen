@@ -269,11 +269,11 @@ class @Chosen extends AbstractChosen
     @result_highlight = el
     @result_highlight.addClassName "highlighted"
 
-      @search_field.writeAttribute("aria-activedescendant", @result_highlight.readAttribute("id"))
+    @search_field.writeAttribute("aria-activedescendant", @result_highlight.readAttribute("id"))
 
-      maxHeight = parseInt @search_results.getStyle('maxHeight'), 10
-      visible_top = @search_results.scrollTop
-      visible_bottom = maxHeight + visible_top
+    maxHeight = parseInt @search_results.getStyle('maxHeight'), 10
+    visible_top = @search_results.scrollTop
+    visible_bottom = maxHeight + visible_top
 
     high_top = @result_highlight.positionedOffset().top
     high_bottom = high_top + @result_highlight.getHeight()
