@@ -110,6 +110,7 @@ class AbstractChosen
     content
 
   result_add_option: (option) ->
+    return '' unless option.search_match
     return '' unless this.include_option_in_results(option)
 
     classes = []
@@ -181,13 +182,13 @@ class AbstractChosen
 
     results = 0
     exact_result = false
+    match_value = false
 
-    searchMatchFromValue = false
     query = this.get_search_text()
-    escapedQuery = query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
-    regex = this.get_search_regex(escapedQuery)
-    exactRegex = new RegExp("^#{escapedQuery}$")
-    highlightRegex = this.get_highlight_regex(escapedQuery)
+    escaped_query = query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
+    regex = this.get_search_regex(escaped_query)
+    exact_regex = new RegExp("^#{escaped_query}$")
+    highlight_regex = this.get_highlight_regex(escaped_query)
 
     for option in @results_data
 
@@ -215,15 +216,15 @@ class AbstractChosen
 
           if not option.search_match and @search_in_values
             option.search_match = this.search_string_match(option.value, regex)
-            searchMatchFromValue = true
+            match_value = true
 
           results += 1 if option.search_match and not option.group
 
-          exact_result = exact_result || exactRegex.test option.html
+          exact_result = exact_result || exact_regex.test option.html
 
           if option.search_match
-            if query.length and not searchMatchFromValue
-              startpos = search_match.index highlightRegex
+            if query.length and not match_value
+              startpos = search_match.index
               prefix = text.slice(0, startpos)
               fix    = text.slice(startpos, startpos + query.length)
               suffix = text.slice(startpos + query.length)
@@ -323,6 +324,7 @@ class AbstractChosen
     match = regex.exec(search_string)
     match = regex.exec(this.escape_special_char(search_string)) if not @case_sensitive_search && match?
     match.index += 1 if not @search_contains && match?[1] # make up for lack of lookbehind operator in regex
+    match
 
   choices_count: ->
     return @selected_option_count if @selected_option_count?
@@ -430,7 +432,6 @@ class AbstractChosen
     return false if not @display_disabled_options and option.disabled
     return false if option.empty
     return false if option.hidden
-    return false if this.get_search_text() and not option.search_match
     return false if option.group_array_index? and @results_data[option.group_array_index].hidden
 
     return true
