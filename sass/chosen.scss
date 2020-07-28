@@ -115,7 +115,9 @@ $chosen-sprite-retina: url('chosen-sprite@2x.png') !default;
   }
   .chosen-single .search-choice-close {
     position: absolute;
-    top: 7px;
+	margin: auto;
+    top: 0;
+	bottom: 0;
     right: 26px;
   }
   .chosen-single div {
