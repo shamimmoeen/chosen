@@ -8,6 +8,7 @@ $chosen-hover-color: #3875d7;
 $chosen-border-color: #aaa;
 $chosen-group-color: #999;
 $chosen-background-color: #fff;
+$chosen-selected-color: #e0e0e0;
 
 /* @group Base */
 .chosen-container {
@@ -217,7 +218,7 @@ $chosen-background-color: #fff;
 
 	.chosen-drop {
 		.result-selected {
-			color: $chosen-active-color;
+			background-color: $chosen-selected-color;
 		}
 	}
 }
