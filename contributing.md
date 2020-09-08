@@ -13,7 +13,7 @@ _**Please Note:** These guidelines are adapted from [@necolas](https://github.co
 an excellent starting point for contributing to any open source project._
 
 
-## Using the issue tracker [![Open Source Helpers](https://www.codetriage.com/harvesthq/chosen/badges/users.svg)](https://www.codetriage.com/harvesthq/chosen)
+## Using the issue tracker
 
 The [issue tracker](https://github.com/jjj/chosen/issues) is the
 preferred channel for [bug reports](#bugs), [features requests](#features)
@@ -28,7 +28,7 @@ following restrictions:
 * Please **do not** derail or troll issues. Keep the discussion on topic and
   respect the opinions of others.
 
-You can triage issues which may include reproducing bug reports or asking for vital information, such as version numbers or reproduction instructions. If you would like to start triaging issues, one easy way to get started is to [subscribe to chosen on CodeTriage](https://www.codetriage.com/harvesthq/chosen).
+You can triage issues which may include reproducing bug reports or asking for vital information, such as version numbers or reproduction instructions. If you would like to start triaging issues, one easy way to get started is to subscribe to chosen on GitHub.
 
 <a name="bugs"></a>
 ## Bug reports
