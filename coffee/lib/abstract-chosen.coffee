@@ -491,7 +491,7 @@ class AbstractChosen
 
   get_create_option_html: (terms) ->
     """
-      <li class="create-option active-result" role="option"><a>#{@create_option_text}</a>: "#{this.escape_html(terms)}"</li>
+      <li class="create-option active-result" role="option"><a>#{@create_option_text}</a> <span>#{this.escape_html(terms)}</span></li>
     """
 
   # class methods and variables ============================================================
@@ -510,5 +510,5 @@ class AbstractChosen
 
   @default_multiple_text: "Select Some Options"
   @default_single_text: "Select an Option"
-  @default_no_result_text: "No results match"
-  @default_create_option_text: "Add Option"
+  @default_no_result_text: "No results for:"
+  @default_create_option_text: "Add Option:"
