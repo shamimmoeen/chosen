@@ -26,5 +26,5 @@ describe "Bugfixes", ->
     xss_option.trigger("mouseup")
 
     # make sure the script tags are escaped correctly
-    label_html = container.find("a.chosen-single").html()
+    label_html = container.find("li.group-result").html()
     expect(label_html).toContain('&lt;/script&gt;&lt;script&gt;console.log(1)&lt;/script&gt;')
