@@ -21,7 +21,6 @@
   "scripts": {
     "test": "grunt test"
   },
-  "dependencies": {},
   "devDependencies": {
     "autoprefixer": "^7.1.2",
     "coffee-script": ">= 1.6",
@@ -35,7 +34,7 @@
     "grunt-contrib-uglify-es": "git://github.com/gruntjs/grunt-contrib-uglify.git#harmony",
     "grunt-contrib-watch": "^1.1.0",
     "grunt-gh-pages": "^4.0.0",
-    "grunt-postcss": "^0.8.0",
+    "grunt-postcss": "^0.9.0",
     "grunt-sass": "3.1.0",
     "grunt-zip": "~0.17.1",
     "grunt1.0-dom-munger": "~3.4",
