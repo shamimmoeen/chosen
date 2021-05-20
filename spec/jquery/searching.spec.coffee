@@ -99,13 +99,13 @@ describe "Searching", ->
     search_field.trigger("keyup")
 
     expect(div.find(".no-results").length).toBe(1)
-    expect(div.find(".no-results").first().html().trim()).toBe("No results match <span>&amp;</span>")
+    expect(div.find(".no-results").first().html().trim()).toBe("No results for: <span>&amp;</span>")
 
     search_field.val("&amp;")
     search_field.trigger("keyup")
 
     expect(div.find(".no-results").length).toBe(1)
-    expect(div.find(".no-results").first().html().trim()).toBe("No results match <span>&amp;amp;</span>")
+    expect(div.find(".no-results").first().html().trim()).toBe("No results for: <span>&amp;amp;</span>")
 
   it "matches in non-ascii languages like Chinese when selecting a single item", ->
     div = $("<div>").html("""

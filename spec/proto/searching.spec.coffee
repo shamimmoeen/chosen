@@ -105,13 +105,13 @@ describe "Searching", ->
     simulant.fire(search_field, "keyup")
 
     expect(div.select(".no-results").length).toBe(1)
-    expect(div.down(".no-results").innerHTML.trim()).toBe("No results match <span>&amp;</span>")
+    expect(div.down(".no-results").innerHTML.trim()).toBe("No results for: <span>&amp;</span>")
 
     search_field.value = "&amp;"
     simulant.fire(search_field, "keyup")
 
     expect(div.select(".no-results").length).toBe(1)
-    expect(div.down(".no-results").innerHTML.trim()).toBe("No results match <span>&amp;amp;</span>")
+    expect(div.down(".no-results").innerHTML.trim()).toBe("No results for: <span>&amp;amp;</span>")
 
   it "matches in non-ascii languages like Chinese when selecting a single item", ->
     div = new Element("div")
