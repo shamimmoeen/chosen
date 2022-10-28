@@ -222,7 +222,6 @@ class Chosen extends AbstractChosen
     @active_field = true
 
     @search_field.val(@search_field.val())
-    @search_field.attr("aria-expanded",true);
     this.search_results.attr("aria-busy", false);
     @search_field.trigger "focus"
 
@@ -295,6 +294,7 @@ class Chosen extends AbstractChosen
     @container.addClass "chosen-with-drop"
     @results_showing = true
 
+    @search_field.attr("aria-expanded", true)
     @search_field.trigger "focus"
     @search_field.val this.get_search_field_value()
 
@@ -315,6 +315,7 @@ class Chosen extends AbstractChosen
       @container.removeClass "chosen-dropup"
       @form_field_jq.trigger("chosen:hiding_dropdown", {chosen: this})
 
+    @search_field.attr("aria-expanded", false)
     @results_showing = false
 
 

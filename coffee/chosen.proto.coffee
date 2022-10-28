@@ -229,7 +229,6 @@ class @Chosen extends AbstractChosen
     @active_field = true
 
     @search_field.value = this.get_search_field_value()
-    @search_field.writeAttribute("aria-expanded", "true")
     this.search_results.writeAttribute("aria-busy", "false")
     @search_field.focus()
 
@@ -299,6 +298,7 @@ class @Chosen extends AbstractChosen
     @container.addClassName "chosen-with-drop"
     @results_showing = true
 
+    @search_field.writeAttribute("aria-expanded", "true")
     @search_field.focus()
     @search_field.value = this.get_search_field_value()
 
@@ -319,6 +319,7 @@ class @Chosen extends AbstractChosen
       @container.removeClassName "chosen-dropup"
       @form_field.fire("chosen:hiding_dropdown", {chosen: this})
 
+    @search_field.writeAttribute("aria-expanded", "false")
     @results_showing = false
 
 
