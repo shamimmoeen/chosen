@@ -62,7 +62,9 @@ class AbstractChosen
     if @include_group_label_in_selected and item.group_label?
       "<b class='group-name'>#{this.escape_html(item.group_label)}</b>#{item.html}"
     else
-      item.html
+      # Add templating feature for wcapf
+      # item.html
+      if this.options.templateSelection then this.options.templateSelection(item.text, item.template_data) else item.html
 
   mouse_enter: -> @mouse_on_container = true
   mouse_leave: -> @mouse_on_container = false
@@ -137,7 +139,11 @@ class AbstractChosen
       if option.data.hasOwnProperty(attrName)
         option_el.setAttribute(attrName, option.data[attrName])
     option_el.setAttribute("role", "option")
-    option_el.innerHTML = option.highlighted_html or option.html
+
+    # Add templating feature for wcapf
+    # option_el.innerHTML = option.highlighted_html or option.html
+    option_el.innerHTML = if this.options.templateResult then this.options.templateResult(option.text, option.template_data) else option.html
+
     option_el.id = "#{@form_field.id}-chosen-search-result-#{option.data['data-option-array-index']}"
     option_el.title = option.title if option.title
 
@@ -461,10 +467,11 @@ class AbstractChosen
     tmp.appendChild(element)
     tmp.innerHTML
 
+  # Add class 'chosen-single-inner' for wcapf templating feature.
   get_single_html: ->
     """
       <a class="chosen-single chosen-default">
-        <span>#{@default_text}</span>
+        <span class="chosen-single-inner">#{@default_text}</span>
         <div><b></b></div>
       </a>
       <div class="chosen-drop">

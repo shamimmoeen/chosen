@@ -8,8 +8,10 @@
     <link rel="stylesheet" href="chosen.css?ver=2.2.1" />
 
     <style>
-      .wrapper {
-        margin: 10em;
+      @media (min-width: 992px) {
+        .wrapper {
+          margin: 10em;
+        }
       }
 
       .select-wrapper {
@@ -18,6 +20,8 @@
       }
 
       .chosen-select {
+        /* max-width: 300px; */
+        /* width: 100%; */
         width: 300px;
       }
     </style>
@@ -56,7 +60,22 @@
 
     <script>
       $(document).ready(function () {
-        $(".chosen-select").chosenWCAPF();
+        $(".chosen-select").chosenWCAPF({
+          //   enable_split_word_search: false,
+          search_contains: true,
+          templateResult: function (text, data) {
+            return [
+              "<span>" + text + "</span>",
+              "<span class='wcapf-count'> (" + data.count + ")</span>",
+            ].join("");
+          },
+          templateSelection: function (text, data) {
+            return [
+              "<span>" + text + "</span>",
+              "<span class='wcapf-count'> (" + data.count + ")</span>",
+            ].join("");
+          },
+        });
       });
     </script>
   </body>

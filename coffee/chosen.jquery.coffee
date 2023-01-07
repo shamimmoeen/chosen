@@ -365,7 +365,9 @@ class Chosen extends AbstractChosen
     this.result_clear_highlight() if $(evt.target).hasClass("active-result") or $(evt.target).parents('.active-result').first()
 
   choice_build: (item) ->
-    choice = $('<li />', { class: "search-choice", "data-value": item.value, role: "option" }).html("<span>#{this.choice_label(item)}</span>")
+    # Add templating feature for wcapf
+    # choice = $('<li />', { class: "search-choice", "data-value": item.value, role: "option" }).html("<span>#{this.choice_label(item)}</span>")
+    choice = $('<li />', { class: "search-choice", "data-value": item.value, role: "option" }).html("<span class='chosen-choice-inner'>#{this.choice_label(item)}</span>")
 
     if item.disabled
       choice.addClass 'search-choice-disabled'
@@ -487,7 +489,9 @@ class Chosen extends AbstractChosen
       this.single_deselect_control_build()
       @selected_item.removeClass("chosen-default")
 
-    @selected_item.find("span").html(text)
+    # Add templating feature for wcapf
+    # @selected_item.find("span").html(text)
+    @selected_item.children("span").html(text)
 
   result_deselect: (pos) ->
     result_data = @results_data[pos]

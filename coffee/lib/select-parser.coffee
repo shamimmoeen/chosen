@@ -24,6 +24,23 @@ class SelectParser
       classes: group.className
     this.add_option( option, group_position, group.disabled ) for option in group.childNodes
 
+  # Add templating feature for wcapf
+  # source: https://github.com/harvesthq/chosen/pull/692
+  get_template_data: (option) ->
+    template_data = {}
+
+    for k, v of option.attributes
+      if typeof(v.nodeName) == "string"
+        attribute_name = v.nodeName.split("-")
+
+        if attribute_name[0] == "data" and attribute_name = attribute_name[1..]
+          for word, i in attribute_name
+            attribute_name[i] = word.charAt(0).toUpperCase() + word.slice(1) if i != 0
+
+          template_data[attribute_name.join("")] = v.nodeValue 
+
+    template_data
+
   add_option: (option, group_position, group_disabled) ->
     if option.nodeName.toUpperCase() is "OPTION"
       if option.text != ""
@@ -43,6 +60,8 @@ class SelectParser
           classes: option.className
           style: option.style.cssText
           data: this.parse_data_attributes(option)
+          # Add templating feature for wcapf
+          template_data: @get_template_data(option)
       else
         @parsed.push
           options_index: @options_index
