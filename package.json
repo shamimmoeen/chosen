@@ -16,6 +16,7 @@
     "url": "https://github.com/jjj/chosen.git"
   },
   "engines": {
+    "//node": "8",
     "node": ">=4"
   },
   "scripts": {
@@ -25,6 +26,7 @@
     "autoprefixer": "^7.1.2",
     "coffee-script": ">= 1.6",
     "grunt": "^1.2.1",
+    "grunt-cli": "^1.4.3",
     "grunt-contrib-coffee": "^2.1.0",
     "grunt-contrib-concat": "~1.0",
     "grunt-contrib-copy": "^1.0.0",
@@ -89,5 +91,8 @@
       "chosen.css",
       "chosen.min.css"
     ]
+  },
+  "dependencies": {
+    "coffeescript": "^2.7.0"
   }
 }

@@ -56,6 +56,7 @@ class AbstractChosen
 
     @results_none_found = @form_field.getAttribute("data-no_results_text") || @options.no_results_text || AbstractChosen.default_no_result_text
     @create_option_text = @form_field.getAttribute("data-create_option_text") || @options.create_option_text || AbstractChosen.default_create_option_text
+    @options_none_text = @form_field.getAttribute("data-options_none_text") || @options.options_none_text || AbstractChosen.default_options_none_text
 
   choice_label: (item) ->
     if @include_group_label_in_selected and item.group_label?
@@ -106,6 +107,15 @@ class AbstractChosen
 
       if shown_results >= @max_shown_results
         break
+
+    # Show message when options are empty for wcapf
+    if !shown_results
+      option_el = document.createElement("li")
+      option_el.className = "no-results no-options"
+      option_el.innerHTML = @options_none_text
+
+      content = option_el
+    # end wcapf modification
 
     content
 
@@ -499,16 +509,19 @@ class AbstractChosen
   @browser_is_supported: ->
     if "Microsoft Internet Explorer" is window.navigator.appName
       return document.documentMode >= 8
-    if /iP(od|hone)/i.test(window.navigator.userAgent) or
-       /IEMobile/i.test(window.navigator.userAgent) or
-       /Windows Phone/i.test(window.navigator.userAgent) or
-       /BlackBerry/i.test(window.navigator.userAgent) or
-       /BB10/i.test(window.navigator.userAgent) or
-       /Android.*Mobile/i.test(window.navigator.userAgent)
-      return false
+    # Below lines are commented out for wcapf
+    # if /iP(od|hone)/i.test(window.navigator.userAgent) or
+    #    /IEMobile/i.test(window.navigator.userAgent) or
+    #    /Windows Phone/i.test(window.navigator.userAgent) or
+    #    /BlackBerry/i.test(window.navigator.userAgent) or
+    #    /BB10/i.test(window.navigator.userAgent) or
+    #    /Android.*Mobile/i.test(window.navigator.userAgent)
+    #   return false
+    # End wcapf modification
     return true
 
   @default_multiple_text: "Select Some Options"
   @default_single_text: "Select an Option"
   @default_no_result_text: "No results for:"
   @default_create_option_text: "Add Option:"
+  @default_options_none_text: "No options to choose"

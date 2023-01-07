@@ -1,7 +1,8 @@
 $ = jQuery
 
 $.fn.extend({
-  chosen: (options) ->
+  # Changed from chosen to chosenWCAPF for wcapf
+  chosenWCAPF: (options) ->
     # Do no harm and return as soon as possible for unsupported browsers, namely IE6 and IE7
     # Continue on if running IE document type but in compatibility mode
     return this unless AbstractChosen.browser_is_supported()
@@ -26,7 +27,7 @@ class Chosen extends AbstractChosen
     @current_selectedIndex = @form_field.selectedIndex
 
   set_up_html: ->
-    container_classes = ["chosen-container"]
+    container_classes = ["chosen-container", "wcapf-chosen-container"] # Added another class for wcapf
     container_classes.push "chosen-container-" + (if @is_multiple then "multi" else "single")
     container_classes.push @form_field.className if @inherit_select_classes && @form_field.className
     container_classes.push "chosen-rtl" if @is_rtl
@@ -158,7 +159,8 @@ class Chosen extends AbstractChosen
         evt.preventDefault()
 
     if evt and evt.type in ['mousedown', 'touchstart'] and not @results_showing
-      evt.preventDefault()
+      if not ($ evt.target).hasClass "search-choice-close" # This line is added for wcapf
+        evt.preventDefault()
 
     if not (evt? and ($ evt.target).hasClass "search-choice-close")
       if not @active_field
@@ -368,7 +370,8 @@ class Chosen extends AbstractChosen
     if item.disabled
       choice.addClass 'search-choice-disabled'
     else
-      close_link = $('<button />', { type: 'button', tabindex: -1, class: 'search-choice-close', 'data-option-array-index': item.data['data-option-array-index'] })
+      # Add the x for wcapf
+      close_link = $('<button />', { type: 'button', tabindex: -1, class: 'search-choice-close', 'data-option-array-index': item.data['data-option-array-index'] }).text("✕")
       close_link.on 'click.chosen', (evt) => this.choice_destroy_link_click(evt)
       choice.append close_link
 
