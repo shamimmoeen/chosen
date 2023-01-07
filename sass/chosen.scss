@@ -478,14 +478,14 @@ $chosen-selected-color: #e0e0e0;
 		padding: 2px 7px 2px 0;
 	}
 
-	.chosen-single span {
+	.chosen-single .chosen-single-inner {
 		margin-right: 0;
 		margin-left: 26px;
 		direction: rtl;
 	}
 
 	.chosen-single-with-deselect {
-		span {
+		.chosen-single-inner {
 			margin-left: 42px;
 		}
 	}
