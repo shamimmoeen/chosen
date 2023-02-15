@@ -378,7 +378,11 @@ class Chosen extends AbstractChosen
       choice.append close_link
 
     if @inherit_option_classes && item.classes
-      choice[0].classList.add item.classes
+      # choice[0].classList.add item.classes
+      # Add the classes one by one for wcapf
+      itemClasses = item.classes.split(' ')
+      itemClasses.forEach (itemClass) ->
+        choice[0].classList.add itemClass
 
     @search_container.before  choice
 

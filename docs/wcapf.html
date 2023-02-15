@@ -34,7 +34,14 @@
           class="chosen-select"
         >
           <option value=""></option>
-          <option value="hello" data-count="2">Hello</option>
+          <option
+            selected
+            value="hello"
+            class="hello world shamim"
+            data-count="2"
+          >
+            Hello
+          </option>
           <option value="world" data-count="5">World</option>
         </select>
       </div>
@@ -46,7 +53,14 @@
           multiple
         >
           <option value=""></option>
-          <option value="hello" data-count="2">Hello</option>
+          <option
+            selected
+            class="hello world shamim"
+            value="hello"
+            data-count="2"
+          >
+            Hello
+          </option>
           <option value="world" data-count="5">World</option>
         </select>
       </div>
@@ -62,6 +76,7 @@
       $(document).ready(function () {
         $(".chosen-select").chosenWCAPF({
           //   enable_split_word_search: false,
+          inherit_option_classes: true,
           search_contains: true,
           templateResult: function (text, data) {
             return [
